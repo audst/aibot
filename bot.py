@@ -31,13 +31,14 @@ class MyClient(discord.Client):
     async def help(self, message):
         if message.content.startswith('!help'):
             embed = discord.Embed(
-                title = "୨ৎ welcome to ai bot ୨ৎ",
+                title = "୨ৎ welcome to lumi bot ୨ৎ",
                 description = (
                     "hi there! i am a bot that can answer ur questions~ (๑˃ᴗ˂)ﻭ\n\n"
                     "heres what i can do for u! 💖\n\n"
                     
                     "♡ `!ask <question>` — ask me anything! ⋆｡‧˚ʚ🍓ɞ˚‧｡⋆\n"
                     "♡ `!bye` — i miss u already!\n"
+                    "♡ `!draw` — i will draw a pic for u!\n"
                     "♡ `!hello` — say hi to me!\n"
                     "♡ `!help` — see this message again!\n"
                     "♡ `!spinthewheel <list of things>` — spin the wheel and get a random item!\n\n"
@@ -160,6 +161,50 @@ class MyClient(discord.Client):
                 )
                 await message.channel.send(embed = embed)
 
+    async def draw(self, message):
+        if message.content.startswith('!draw'):
+            prompt = message.content[len('!draw '):].strip()
+            if not prompt:
+                embed = discord.Embed(
+                    title = "୨୧ what do you want me to draw! ୨୧",
+                    description = "give me a prompt!˚",
+                    color = 0xffc0cb
+                )
+                await message.channel.send(embed = embed)
+                return
+
+            embed = discord.Embed(
+                title = "୨୧ drawing your idea... ୨୧",
+                description = f"hold on~ ✧*:･ﾟ✧\n**{prompt}**",
+                color = 0xffc0cb
+            )
+            await message.channel.send(embed = embed)
+
+            try: 
+                image = openai_client.images.generate(
+                    model="dall-e-2",
+                    prompt=prompt,
+                    n=1,
+                    size="512x512"
+                )
+
+                image_url = image.data[0].url
+                embed = discord.Embed(
+                    title = "୨୧ here’s your drawing! ୨୧",
+                    description = f"i hope you like it! (๑˃ᴗ˂)ﻭ",
+                    color = 0xffc0cb
+                )
+
+                embed.set_image(url=image_url)
+                await message.channel.send(embed = embed)
+            except Exception as e:
+                embed = discord.Embed(
+                    title = "୨୧ oops! ୨୧",
+                    description = f"i’m having trouble drawing that... (｡•́︿•̀｡)\nerror: {str(e)}",
+                    color = 0xffc0cb
+                )
+                await message.channel.send(embed = embed)   
+
     async def on_message(self, message):
 
         if message.author == self.user:
@@ -167,6 +212,7 @@ class MyClient(discord.Client):
 
         await self.ask(message)
         await self.bye(message)
+        await self.draw(message)
         await self.hello(message)
         await self.help(message)
         await self.spinthewheel(message)
@@ -174,5 +220,5 @@ class MyClient(discord.Client):
 intents = discord.Intents.default()
 intents.message_content = True
 
-client = MyClient(intents=intents)
-client.run(bot_token)
+bot_client = MyClient(intents=intents)
+bot_client.run(bot_token)
