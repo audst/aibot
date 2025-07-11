@@ -28,27 +28,58 @@ class MyClient(discord.Client):
     async def on_message(self, message):
         if message.author == self.user:
             return
+        
+        if message.content.startswith('!help'):
+            embed = discord.Embed(
+                title = "୨ৎ welcome to ai bot ୨ৎ",
+                description = (
+                    "hi there! i am a bot that can answer ur questions~ (๑˃ᴗ˂)ﻭ\n"
+                    "heres what i can do for u! 💖\n\n"
+                    "♡ `!hello` — say hi to me!\n"
+                    "♡ `!bye` — i miss u already~\n"
+                    "♡`!ask <question>` — ask me anything and i will think really hard about it! ⋆｡‧˚ʚ🍓ɞ˚‧｡⋆\n"
+                    "♡ more commands coming soon... (ฅ'ω'ฅ)"
+                ),
+                color = 0xffc0cb
+            )
+            embed.set_footer(text=" ૮₍ ´• ˕ •` ₎ა", icon_url="https://emojicombos.com/wp-content/uploads/2022/10/cute-star.png")
+            await message.channel.send(embed = embed)
 
         if message.content.startswith('!hello'):
-            await message.channel.send('HIIII! ദ്ദി(˵ •̀ ᴗ - ˵ ) ✧')
+            embed = discord.Embed(
+                title = "୨୧ hello there! ୨୧",
+                description = "i’m so happy to see u! ദ്ദി(˵ •̀ ᴗ - ˵ ) ✧",
+                color = 0xffc0cb
+            )
+            await message.channel.send(embed = embed)
 
         if message.content.startswith('!bye'):
-            await message.channel.send('BYE (˶˃⤙˂˶)')
+            embed = discord.Embed(
+                title = "୨୧ goodbye! ୨୧",
+                description = "miss u already! (˶˃⤙˂˶)",
+                color = 0xffc0cb
+            )
+            await message.channel.send(embed = embed)
 
         if message.content.startswith('!ask'):
             question = message.content[len('!ask '):].strip()
             if not question:
-                await message.channel.send('please ask a question after !ask')
+                embed = discord.Embed(
+                    title = "୨୧ ask me something! ୨୧",
+                    description = "i can’t answer nothing! (๑•́ ₃ •̀๑)‧º·˚",
+                    color = 0xffc0cb
+                )
+                await message.channel.send(embed = embed)
                 return
             
-            await message.channel.send('thinking...')
+            await message.channel.send('thinking... ₍ᐢ. .ᐢ₎ ₊˚⊹♡')
             try:
                 response = openai_client.chat.completions.create(
                     model="gpt-4o-mini",
                     messages=[
                         {
                             "role": "system",
-                            "content": "you are a kind and polite assistant."
+                            "content": "you are a cute and friendly assistant that uses all lowercase letters and emojis in your responses. you are very helpful and always try to be positive and encouraging. you love to use cute expressions and kaomoji in your replies",
                         },
                         {
                             "role": "user",
@@ -57,9 +88,20 @@ class MyClient(discord.Client):
                     ],
                     max_tokens=100,
                 )
-                await message.channel.send(response.choices[0].message.content)
+
+                embed = discord.Embed(
+                    title = "୨୧ here’s what i think! ୨୧",
+                    description = response.choices[0].message.content.strip(),
+                    color = 0xffc0cb
+                )
+                await message.channel.send(embed = embed)
             except Exception as e:
-                await message.channel.send(f'error!!: {str(e)}')
+                embed = discord.Embed(
+                    title = "୨୧ oops! ୨୧",
+                    description = f"i’m having trouble answering that... (｡•́︿•̀｡)\nerror: {str(e)}",
+                    color = 0xffc0cb
+                )
+                await message.channel.send(embed = embed)
 
 intents = discord.Intents.default()
 intents.message_content = True
