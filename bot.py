@@ -130,7 +130,6 @@ class MyClient(discord.Client):
                 await message.channel.send(embed = embed)
                 return
             
-            await message.channel.send('thinking... ₍ᐢ. .ᐢ₎ ₊˚⊹♡')
             try:
                 response = openai_client.chat.completions.create(
                     model="gpt-4o-mini",
@@ -182,10 +181,10 @@ class MyClient(discord.Client):
 
             try: 
                 image = openai_client.images.generate(
-                    model="dall-e-2",
+                    model="dall-e-3",
                     prompt=prompt,
                     n=1,
-                    size="512x512"
+                    size="1024x1024"
                 )
 
                 image_url = image.data[0].url
